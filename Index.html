@@ -8,6 +8,49 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
+    /* Loader styles for modal popup */
+    .modal-loader {
+      display: block;
+      position: relative;
+      height: 32px;
+      width: 120px;
+      border-bottom: 5px solid #fff;
+      box-sizing: border-box;
+      animation: balancing 2s linear infinite alternate;
+      transform-origin: 50% 100%;
+      margin: 40px auto;
+    }
+    .modal-loader:before{
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #FF3D00;
+      animation: ballbns 2s linear infinite alternate;
+    }
+    .modal-loader:after{
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      height: 20px;
+      width: 20px;
+      transform: translate(-50%, 100%);
+      border-radius: 50%;
+      border: 6px solid #fff;
+    }
+    @keyframes ballbns {
+      0% {  left: 0; transform: translateX(0%); }
+      100% {  left: 100%; transform: translateX(-100%); }
+    }
+    @keyframes balancing {
+      0% {  transform: rotate(-15deg); }
+      50% {  transform: rotate(0deg); }
+      100% {  transform: rotate(15deg); }
+    }
     :root{
       --bg:#0b1020;
       --card:#0f1724;
@@ -22,7 +65,7 @@
       linear-gradient(180deg, rgba(4,6,12,0.8), rgba(2,4,8,0.95)),
       url('REPLACE_WITH_WALLPAPER_URL') center/cover no-repeat fixed;
       color:#e6eef8; min-height:100vh; -webkit-font-smoothing:antialiased;}
-    .overlay{backdrop-filter: blur(6px); background:linear-gradient(180deg, rgba(4,6,12,0.45), rgba(4,6,12,0.65)); min-height:100vh; padding:40px 20px;}
+  .overlay{backdrop-filter: blur(6px); background:linear-gradient(180deg, #181f2a 80%, #232b3a 100%); min-height:100vh; padding:40px 20px;}
     .container{max-width:var(--maxw); margin:0 auto;}
     header{display:flex;align-items:center;justify-content:space-between;gap:20px; margin-bottom:28px;}
     .brand{display:flex;align-items:center;gap:14px}
@@ -84,6 +127,12 @@
   </style>
 </head>
 <body>
+  <div id="loaderScreen" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0b1020;z-index:99999;display:flex;align-items:center;justify-content:center;">
+    <div>
+      <div class="loader"></div>
+    </div>
+  </div>
+  <div class="overlay" id="mainContent" style="display:none;">
   <div class="overlay">
     <div class="container">
       <header>
@@ -100,6 +149,7 @@
           <a class="btn" href="#features">Features</a>
           <a class="btn" href="#rules">Rules</a>
           <a class="btn" href="#gallery">Gallery</a>
+          <a class="btn primary" href="#shop" style="margin:10px 0;">Go to Shop</a>
           <a class="btn primary" id="discordBtn" href="https://discord.gg/DRqTVyWm" target="_blank" rel="noreferrer">Join Discord</a>
         </nav>
       </header>
@@ -236,6 +286,54 @@
         </section>
 
         <section id="gallery" class="card" style="margin-bottom:18px">
+        <section id="shop" class="card" style="margin-bottom:18px">
+          <h3>Server Shop</h3>
+          <p class="muted">Purchase ranks to support the server. Contact staff after payment for activation.</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px">
+            <div class="feature">
+              <!-- Replace with picture -->
+              <img src="" alt="https://cdn.discordapp.com/attachments/1423628175455293526/1424578187727470714/file_0000000084f461f894d605c824b34bfa.png?ex=68e47553&is=68e323d3&hm=048a4876c271776b5350ec67d8d4fc4e184b1790ceb1ea1ce8be8abd35d259e3&" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
+              <strong>MVP Rank</strong>
+              <div class="muted" style="margin-top:6px">Unique tag, more sethomes, extra perks</div>
+              <div style="color:#ffd700;font-weight:700;margin-bottom:6px">1500 LKR</div>
+              <a class="btn primary" href="#">Buy</a>
+            </div>
+            <!-- Modal for payment instructions -->
+            <div id="paymentModal" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99;align-items:center;justify-content:center;">
+              <div id="modalContent" style="background:#181f2a;padding:32px 24px;border-radius:14px;max-width:350px;width:90%;box-shadow:0 8px 32px #000;position:relative;margin:60px auto;">
+                <div id="modalLoader" class="modal-loader"></div>
+                <div id="modalDetails" style="display:none;">
+                  <button id="closeModal" style="position:absolute;top:10px;right:14px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer">&times;</button>
+                  <h3 style="margin-top:0" id="modalTitle">Pay to Get Your Rank</h3>
+                  <div class="muted" id="modalPrice" style="margin-bottom:10px;font-weight:600"></div>
+                  <div style="font-size:15px;line-height:1.7">
+                    <strong>Name:</strong> W.A.D.M.Perera<br>
+                    <strong>A/C NO:</strong> 094020310955<br>
+                    <strong>Branch:</strong> Minuwangoda<br>
+                    <strong>Bank:</strong> HNB<br>
+                    <span class="muted">You will receive your rank within 24 hours after payment.<br>Show your receipt to an Admin, Head Admin, or Owner for activation.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feature">
+              <!-- Replace with picture -->
+              <img src="" alt="https://cdn.discordapp.com/attachments/1423628175455293526/1424578188264214569/file_00000000c70c61f9b041f9982898255c.png?ex=68e47553&is=68e323d3&hm=9433dc097bfea827d8b2a3a004c765affcc786b55314170eb31b3afd2c6b670c&" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
+              <strong>VIP Rank</strong>
+              <div class="muted" style="margin-top:6px">Special prefix, extra homes</div>
+              <div style="color:#ffd700;font-weight:700;margin-bottom:6px">3500 LKR</div>
+              <a class="btn primary" href="#">Buy</a>
+            </div>
+            <div class="feature">
+              <!-- Replace with picture -->
+              <img src="" alt="https://cdn.discordapp.com/attachments/1423628175455293526/1424578187379347456/file_00000000e01061fab2b6330a651423aa.png?ex=68e47553&is=68e323d3&hm=060cebc8f70f888de1a1b354fef8133b53988619b32da2ece47adeb780d0ffe7&" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
+              <strong>GOD Rank</strong>
+              <div class="muted" style="margin-top:6px">All MVP perks plus exclusive commands</div>
+              <div style="color:#ffd700;font-weight:700;margin-bottom:6px">5500 LKR</div>
+              <a class="btn primary" href="#">Buy</a>
+            </div>
+          </div>
+        </section>
           <h3>Screenshots & builds</h3>
           <div class="gallery" style="margin-top:12px">
             <img src="https://cdn.discordapp.com/attachments/1281620898943733760/1424400779166355574/Minecraft__1.20.6_10_5_2025_6_58_17_PM.png?ex=68e3d019&is=68e27e99&hm=74d919179e0272cd89419fac4539ae60cae5c22004cec46940742d169c43c8b3&" alt="Screenshot 1" />
@@ -259,6 +357,39 @@
   </div>
 
   <script>
+    // Show hint if popup is not fully visible
+    // Loader logic
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        document.getElementById('loaderScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = '';
+      }, 5000);
+    });
+      // Shop modal logic
+      document.querySelectorAll('#shop .btn.primary').forEach(btn => {
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          var rank = btn.parentElement.querySelector('strong').textContent.trim();
+          var price = btn.parentElement.querySelector('div[style*="color:#ffd700"]')?.textContent.trim() || '';
+          document.getElementById('modalTitle').textContent = 'Pay for ' + rank;
+          document.getElementById('modalPrice').textContent = price ? ('Price: ' + price) : '';
+          document.getElementById('paymentModal').style.display = 'flex';
+          document.getElementById('modalLoader').style.display = '';
+          document.getElementById('modalDetails').style.display = 'none';
+          setTimeout(function(){
+            document.getElementById('modalLoader').style.display = 'none';
+            document.getElementById('modalDetails').style.display = '';
+          }, 3000);
+        });
+      });
+      document.getElementById('closeModal').addEventListener('click', function(){
+        document.getElementById('paymentModal').style.display = 'none';
+      });
+      document.getElementById('paymentModal').addEventListener('click', function(e){
+        if(e.target === this){
+          document.getElementById('paymentModal').style.display = 'none';
+        }
+      });
     // Lightweight interactive bits
   const serverIp = "my1.aurex.lk:26015"; // change to your real IP
     document.getElementById('serverIp').textContent = serverIp;
