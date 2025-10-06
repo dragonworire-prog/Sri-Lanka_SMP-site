@@ -127,13 +127,10 @@
   </style>
 </head>
 <body>
-  <div id="loaderScreen" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0b1020;z-index:99999;display:flex;align-items:center;justify-content:center;">
-    <div>
-      <div class="loader"></div>
-    </div>
-  </div>
-  <div class="overlay" id="mainContent" style="display:none;">
-  <div class="overlay">
+  <!-- Chasing light background effect -->
+  <div id="chase-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;"></div>
+  <div class="overlay" id="mainContent" style="background:transparent;">
+  <div class="overlay" style="background:transparent;">
     <div class="container">
       <header>
         <div class="brand">
@@ -292,7 +289,7 @@
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px">
             <div class="feature">
               <!-- Replace with picture -->
-              <img src="" alt="https://cdn.discordapp.com/attachments/1423628175455293526/1424578187727470714/file_0000000084f461f894d605c824b34bfa.png?ex=68e47553&is=68e323d3&hm=048a4876c271776b5350ec67d8d4fc4e184b1790ceb1ea1ce8be8abd35d259e3&" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
+              <img src="https://cdn.discordapp.com/attachments/1423628175455293526/1424578187727470714/file_0000000084f461f894d605c824b34bfa.png?ex=68e47553&is=68e323d3&hm=048a4876c271776b5350ec67d8d4fc4e184b1790ceb1ea1ce8be8abd35d259e3&" alt="MVP Rank" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
               <strong>MVP Rank</strong>
               <div class="muted" style="margin-top:6px">Unique tag, more sethomes, extra perks</div>
               <div style="color:#ffd700;font-weight:700;margin-bottom:6px">1500 LKR</div>
@@ -318,7 +315,7 @@
             </div>
             <div class="feature">
               <!-- Replace with picture -->
-              <img src="" alt="https://cdn.discordapp.com/attachments/1423628175455293526/1424578188264214569/file_00000000c70c61f9b041f9982898255c.png?ex=68e47553&is=68e323d3&hm=9433dc097bfea827d8b2a3a004c765affcc786b55314170eb31b3afd2c6b670c&" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
+              <img src="https://cdn.discordapp.com/attachments/1423628175455293526/1424578188264214569/file_00000000c70c61f9b041f9982898255c.png?ex=68e47553&is=68e323d3&hm=9433dc097bfea827d8b2a3a004c765affcc786b55314170eb31b3afd2c6b670c&" alt="VIP Rank" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
               <strong>VIP Rank</strong>
               <div class="muted" style="margin-top:6px">Special prefix, extra homes</div>
               <div style="color:#ffd700;font-weight:700;margin-bottom:6px">3500 LKR</div>
@@ -326,7 +323,7 @@
             </div>
             <div class="feature">
               <!-- Replace with picture -->
-              <img src="" alt="https://cdn.discordapp.com/attachments/1423628175455293526/1424578187379347456/file_00000000e01061fab2b6330a651423aa.png?ex=68e47553&is=68e323d3&hm=060cebc8f70f888de1a1b354fef8133b53988619b32da2ece47adeb780d0ffe7&" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
+              <img src="https://cdn.discordapp.com/attachments/1423628175455293526/1424578187379347456/file_00000000e01061fab2b6330a651423aa.png?ex=68e47553&is=68e323d3&hm=060cebc8f70f888de1a1b354fef8133b53988619b32da2ece47adeb780d0ffe7&" alt="GOD Rank" class="rank-img" style="width:64px;height:64px;border-radius:8px;object-fit:cover;margin-bottom:8px;background:#232b3a;display:block;" />
               <strong>GOD Rank</strong>
               <div class="muted" style="margin-top:6px">All MVP perks plus exclusive commands</div>
               <div style="color:#ffd700;font-weight:700;margin-bottom:6px">5500 LKR</div>
@@ -356,15 +353,11 @@
     </div>
   </div>
 
+  <!-- Chasing light background effect -->
+  <div id="chase-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;"></div>
+
   <script>
-    // Show hint if popup is not fully visible
-    // Loader logic
-    window.addEventListener('DOMContentLoaded', function() {
-      setTimeout(function() {
-        document.getElementById('loaderScreen').style.display = 'none';
-        document.getElementById('mainContent').style.display = '';
-      }, 5000);
-    });
+    // Loader logic removed
       // Shop modal logic
       document.querySelectorAll('#shop .btn.primary').forEach(btn => {
         btn.addEventListener('click', function(e){
@@ -422,6 +415,22 @@
         if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
       });
     });
+
+    // Chasing light effect for background
+const chaseBg = document.getElementById('chase-bg');
+let chaseX = window.innerWidth/2, chaseY = window.innerHeight/2;
+let targetX = chaseX, targetY = chaseY;
+function animateChase() {
+  chaseX += (targetX - chaseX) * 0.12;
+  chaseY += (targetY - chaseY) * 0.12;
+  chaseBg.style.background = `radial-gradient(circle 80px at ${chaseX}px ${chaseY}px, #00fff7 0%, rgba(0,194,160,0.18) 60%, #181f2a 100%)`;
+  requestAnimationFrame(animateChase);
+}
+animateChase();
+window.addEventListener('mousemove', function(e) {
+  targetX = e.clientX;
+  targetY = e.clientY;
+});
   </script>
 </body>
 </html>
